@@ -84,8 +84,6 @@ class MessageDispatcher(object):
         except (KeyError, TypeError):
             if 'username' in msg:
                 username = msg['username']
-            elif 'bot_id' in msg:
-                username = msg['bot_id']
             else:
                 return
 
@@ -196,18 +194,12 @@ class Message(object):
     def _get_user_id(self):
         if 'user' in self._body:
             return self._body['user']
-        if 'bot_id' in self._body:
-            return self._body['bot_id']
 
         return self._client.find_user_by_name(self._body['username'])
 
     @unicode_compact
     def _gen_at_message(self, text):
-        id = self._get_user_id()
-        if id[0] == 'B':
-            text = u'{}'.format(text)
-        else:
-            text = u'<@{}>: {}'.format(id, text)
+        text = u'<@{}>: {}'.format(self._get_user_id(), text)
         return text
 
     @unicode_compact
